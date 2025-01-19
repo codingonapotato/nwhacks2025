@@ -113,8 +113,9 @@ def main():
         cv2.imshow("Image", img)
         cv2.waitKey(1)
 
-
     print(convert(result))
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
