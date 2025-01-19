@@ -28,6 +28,29 @@ Best project ever
 # Flask Server IP
 http://52.91.85.117:5000 (changes each time instance run)
 
+# Run locally vs over EC2
+1. under ../GitHub/nwhacks2025/server/flaskr/__init__.py
+   uncomment the following for running server on EC2 instance 
+    configure connection to MongoDB
+    # this is on EC2
+    client = MongoClient(
+        os.environ[MONGO_URI],
+        ssl=True,
+        tlsCAFile="C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\certifi\\cacert.pem"
+    )
+
+    # this locally
+    client = MongoClient(
+    os.environ[MONGO_URI]
+    )
+
+2. ../GitHub/nwhacks2025/frontend.py
+   # uncomment the following for running locally
+   self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
+
+   # this for ec2
+   self.request_sender = requestSender.RequestSender("http://52.91.85.117:5000")    # connect to EC2 instance
+
 # Default network settings
 1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol<br>
 2. On EC2 Windows modify firewall configuration<br>
