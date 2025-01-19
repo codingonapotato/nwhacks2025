@@ -26,7 +26,7 @@ Best project ever
              )<br>
 
 # Flask Server IP
-http://52.91.85.117:5000
+http://52.91.85.117:5000 (changes each time instance run)
 
 # Default network settings
 1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol<br>
