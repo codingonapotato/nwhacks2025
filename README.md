@@ -12,30 +12,30 @@ Best project ever
 1. Run `deactivate`
 
 # Steps to setup SSL Certificates
-1. On MacOs run: open "/Applications/Python <YOUR PYTHON VERSION>/Install Certificates.command"
-2. On Windows run:
-       pip install certifi
-       python -c "import certifi; print(certifi.where())"
-   with path in Flask file:
-      from pymongo import MongoClient
-      client = MongoClient(
-          "mongodb+srv://<your-username>:<your-password>@gesture-pw-db.zu1ec.mongodb.net/<your-database>",
-          ssl=True,
-          tlsCAFile="C:<path to your certifi>\\certifi\\cacert.pem"
-      )
+1. On MacOs run: `open "/Applications/Python <YOUR PYTHON VERSION>/Install Certificates.command"`<br>
+2. On Windows run:<br>
+       - `pip install certifi`<br>
+       - `python -c "import certifi; print(certifi.where())"`<br>
+       - with path in Flask file:<br>
+             from pymongo import MongoClient<br>
+             client = MongoClient(
+                 "mongodb+srv://<your-username>:<your-password>@gesture-pw-db.zu1ec.mongodb.net/<your-database>",
+                 ssl=True,
+                 tlsCAFile="C:<path to your certifi>\\certifi\\cacert.pem"
+             )<br>
 
 # Flask Server IP
 http://52.91.85.117:5000
 
 # Default network settings
-1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol
-2. On EC2 Windows modify firewall configuration
-          Open Windows Firewall -> find Windows Defender Firewall
-          Create new Inbound Rule:
-                 Rule Type: Select Port and click Next
-                 Protocol and Ports: Select TCP
-                 local ports field: enter port 5000
-                 Click Next -> Allow Domain, Private and Public
-                 Save the rule
+1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol<br>
+2. On EC2 Windows modify firewall configuration<br>
+          Open Windows Firewall -> find Windows Defender Firewall<br>
+          Create new Inbound Rule:<br>
+                 Rule Type: Select Port and click Next<br>
+                 Protocol and Ports: Select TCP<br>
+                 local ports field: enter port 5000<br>
+                 Click Next -> Allow Domain, Private and Public<br>
+                 Save the rule<br>
           
 4. Under MongoDB, Security -> Network Access -> add Access List Entry :**0.0.0.0/0**
