@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-class handCapture():
+class detector():
     def __init__(self):
         self.hands = mp.solutions.hands.Hands(
             static_image_mode=False,  
@@ -132,7 +132,7 @@ class handCapture():
 
 def main():
     cap = cv2.VideoCapture(1)
-    detector = handCapture()
+    detector = detector()
     
     while True:
         success, img = cap.read()
