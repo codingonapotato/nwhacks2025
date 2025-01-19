@@ -396,14 +396,11 @@ class MainWindow(QWidget):
         invalid_Notif.setIcon(QMessageBox.Critical)
 
         
-        if slot0 == slot1 or slot0 == slot2 or slot0 == slot3:
-            print("error") #TODO: HAVE POP UP SAY THAT CAN'T BE THE SAME
+        if (slot0 == slot1 and hand_0 == hand_1) or (slot0 == slot2 and hand_0 == hand_2) or (slot0 == slot3 and hand_0 == hand_3):
             invalid_Notif.exec_()
-        elif slot1 == slot2 or slot1 == slot3:
-            print("error") #TODO: HAVE POP UP SAY THAT CAN'T BE THE SAME
+        elif (slot1 == slot2 and hand_1 == hand_2) or (slot1 == slot3 and hand_1 == hand_3):
             invalid_Notif.exec_()
-        elif slot2 == slot3:
-            print("error")
+        elif (slot2 == slot3 and hand_2 == hand_3):
             invalid_Notif.exec_()
         else:
             self.saveMapping()
