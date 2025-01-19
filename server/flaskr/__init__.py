@@ -3,7 +3,7 @@ from flaskr.constants import *
 import flaskr.db as db
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flaskr.db import *
 from flask import Flask, request, jsonify
 
@@ -42,8 +42,9 @@ def create_app(test_config=None):
             "status" : 404
         }
         dbResponse = passwordsDB.find({"email" : data["email"]})
-        if dbResponse:
+        if len(list(dbResponse)):
             response["status"] = 200
+           
         return jsonify(response)
 
     @app.route('/login', methods=['POST'])
@@ -55,10 +56,10 @@ def create_app(test_config=None):
             "status" : 404
         }
         dbResponse = passwordsDB.find({"email" : data["email"]})
-        dbPassword = generate_password_hash(dbResponse["password"])
+        dbPassword = dbResponse[0]["password"]
 
-        if dbPassword == password:
-            response = 200
+        if check_password_hash(dbPassword,password):
+            response["status"] = 200
         return jsonify(response)       
 
     return app
