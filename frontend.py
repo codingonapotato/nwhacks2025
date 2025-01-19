@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox
 import sys
+import slapper
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -79,8 +80,13 @@ class MainWindow(QWidget):
     
     # TODO: Add implementation so that it checks that the username exists    
     def checkUserExists(self):
-        userName = self.usernameField.text()
-        print(userName)
+        # userName = self.usernameField.text()
+        # print(userName)
+        try: 
+            slapper.main()
+        except Exception as e: 
+            print(e)
+        
         # TODO: make it call the next screen
         
     # Function to set the Registration page   
