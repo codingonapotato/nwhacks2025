@@ -391,6 +391,11 @@ class MainWindow(QWidget):
         slot2 = self.symbol_2.currentText()
         slot3 = self.symbol_3.currentText()
         
+        hand_0 = self.hand_0.currentText()
+        hand_1 = self.hand_1.currentText()
+        hand_2 = self.hand_2.currentText()
+        hand_3 = self.hand_3.currentText()
+        
         invalid_Notif = QMessageBox()
         invalid_Notif.setText("Overlap Binding detected. Please ensure that no slots use the same sign")
         invalid_Notif.setIcon(QMessageBox.Critical)
