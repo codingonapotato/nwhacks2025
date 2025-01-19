@@ -56,9 +56,9 @@ def main():
             if wrist_start_time is None:  # Begin tracking if wrist is detected
                 wrist_start_time = time.time()
                 wrist_start_x = wrist * img_width
-                print(f"Start wrist X: {wrist_start_x}")
+                # print(f"Start wrist X: {wrist_start_x}")
 
-            print(f"Current wrist X: {wrist * img_width}")
+            # print(f"Current wrist X: {wrist * img_width}")
             elapsed_time = time.time() - wrist_start_time
             wrist_current_x = wrist * img_width
 
@@ -69,7 +69,7 @@ def main():
 
             # If 3 seconds passed and no swipe detected, reset
             if elapsed_time > 3 and not swipe_detected:
-                print("No swipe detected within 3 seconds, resetting...")
+                # print("No swipe detected within 3 seconds, resetting...")
                 wrist_start_time = None
                 wrist_start_x = None
 
@@ -82,19 +82,19 @@ def main():
             
         # Detect specific signs
         if finger_curls == [1, 0, 0, 1, 1] and not crossed:
-            # print("Peace sign detected")
+            print("Peace sign detected")
             gesture = "peace"
             captured = True
         elif finger_curls == [1, 0, 0, 1, 1] and crossed:
-            # print("Infinity sign detected")
+            print("Infinity sign detected")
             gesture = "infinity"
             captured = True
         elif finger_curls == [0, 1, 1, 1, 0] and not crossed:
-            # print("Six sign detected")
+            print("Six sign detected")
             captured = True
             gesture = "six"
         elif finger_curls == [0, 0, 1, 1, 0] and not crossed:
-            # print("Spider sign detected")
+            print("Spider sign detected")
             captured = True
             gesture = "spider"
 
