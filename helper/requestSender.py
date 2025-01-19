@@ -45,4 +45,6 @@ class RequestSender:
     def login(self, email, password):
         login_data = {'email': email, 'password': password}
         return self._make_request('login', login_data)
-
+    
+    def getKey(self):
+        return self._make_request('get-key', {})

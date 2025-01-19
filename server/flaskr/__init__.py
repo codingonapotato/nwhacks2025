@@ -27,7 +27,6 @@ def create_app(test_config=None):
     #     tlsCAFile="C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\certifi\\cacert.pem"
     # )
 
-
     # this locally
     client = MongoClient(
     os.environ[MONGO_URI]
@@ -72,22 +71,48 @@ def create_app(test_config=None):
     except Exception as e:
         print(e)
 
+    # for debugging
     @app.route('/')
     def default():
         message = {'message': 'hello'}
         return jsonify(message)
+    @app.route('/get-key')
+    def getKey():
+        response = {
+            "message" : {"public_key" : serialized_public_key}, 
+            "status" : 200
+        }
+        return jsonify(response)
+    
     # api endpoints
     @app.route('/register', methods=['POST'])
     def registerUser():
         data = request.get_json()
-        email, password = data["email"], data["password"] # TODO: Decrypt with private key
+        email, password = data["email"], data["password"]
+        encrypted_password_bytes = base64.b64decode(password)
+
         response = {
-            "message" : {"email" : email, "password" : password, "public_key" : serialized_public_key}, 
+            "message" : {"email" : email, "password" : password}, 
             "status" : 404
         }
+
+        # decrypt the password using private key
+        try:
+            decrypted_password = private_key.decrypt(
+                encrypted_password_bytes,
+                padding.OAEP(
+                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                    algorithm=hashes.SHA256(),
+                    label=None
+                )
+            ).decode()
+            print(decrypted_password)
+        except Exception as e:
+            print(e)
+            return jsonify(response)
         print(email)
         print(password)
-        dbResponse = passwordsDB.insert_one({"email" : email, "password": generate_password_hash(password)})
+        dbResponse = passwordsDB.insert_one({"email" : email, "password": generate_password_hash(decrypted_password)})
         if dbResponse.inserted_id:
             response["status"] = 200
         return jsonify(response)

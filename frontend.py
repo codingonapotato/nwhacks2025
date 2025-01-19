@@ -15,6 +15,15 @@ class MainWindow(QWidget):
         super().__init__()
         # self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
         self.request_sender = requestSender.RequestSender("http://52.91.85.117:5000")    # connect to EC2 instance 
+        try:
+            public_key = self.request_sender.getKey()
+            if public_key["status"] != 200:
+                raise Exception(f"server returned status code {public_key['status']} when trying to get public key")
+            with open("public_key.pem", "w") as f:
+                    f.write(public_key)
+        except Exception as e:
+            print(e) # :( aur naur
+            self.close()
 
         self.setWindowTitle("Hand Gesture Login") # TODO: COME UP WITH A CREATIVE NAME 
         
@@ -174,12 +183,24 @@ class MainWindow(QWidget):
         valid_password = self.checkValidPassword()
         if (valid_email and valid_password):
             try: 
-                register_response = self.request_sender.registration(self.user_email_field.text(), self.user_password_registration.text())
-                public_key = register_response['message']['public_key']
-                print(public_key)
-                with open("public_key.pem", "w") as f:
-                    f.write(public_key)
-                print("Public key saved locally")
+                with open('public_key.pem', "rb") as f:    # read in binary 
+                    public_key = f.read()
+                    public_key = serialization.load_pem_public_key(public_key)
+                encrypted_password = public_key.encrypt(
+                    valid_password.encode(),  # Convert password to bytes
+                    padding.OAEP(
+                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                    algorithm=hashes.SHA256(),
+                    label=None
+                    ))
+                encrypted_password_base64 = base64.b64encode(encrypted_password).decode('utf-8')
+
+                register_response = self.request_sender.registration(self.user_email_field.text(), encrypted_password_base64 = base64.b64encode(encrypted_password).decode('utf-8'))
+                # public_key = register_response['message']['public_key']
+                # print(public_key)
+                # with open("public_key.pem", "w") as f:
+                #     f.write(public_key)
+                # print("Public key saved locally")
                 register_success_Notif = QMessageBox()
                 register_success_Notif.setText("Registration successful, redirecting back to home page.")
                 register_success_Notif.setIcon(QMessageBox.Information)
@@ -359,18 +380,6 @@ class MainWindow(QWidget):
         
         self.stackedWidget.setCurrentWidget(passwordWidget_1)
         
-        
-    
-        
-        
-        
-        
-        
-        
-    
-
-
-
 app = QApplication(sys.argv) 
 window = MainWindow()
 window.show()
