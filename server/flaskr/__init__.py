@@ -21,21 +21,43 @@ def create_app(test_config=None):
 
     # configure connection to MongoDB
     db.mongoClient.append(MongoClient(os.environ[MONGO_URI]))
-    
     database = db.mongoClient[0].get_database("passwords")
     passwordsDB = database.get_collection("passwords")
 
-    # setup public/private key pair encryption
-    private_key = rsa.generate_private_key(
+    # setup public key (configure only once)
+    if not os.path.exists("private_key.pem"):
+        private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size = 2048
-    )
-    
-    public_key = private_key.public_key()
-    serialized_public_key = public_key.public_bytes(
-        encoding = serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    ).decode()
+        )
+        serialized_private_key = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+            )
+
+        # Save the serialized public key to a .pem file
+        try:
+            with open("private_key.pem", "wb") as pem_file:
+                pem_file.write(serialized_private_key)
+            print(f"Private key saved to private_key.pem")
+        except Exception as e:
+            print(e)
+    else:
+        print(f"Private key file already exists.")
+
+    try:
+        with open('private_key.pem', "rb") as f:    # read in binary 
+            private_key = f.read()
+            private_key = serialization.load_pem_private_key(private_key, password=None)
+            public_key = private_key.public_key()
+            serialized_public_key = public_key.public_bytes(
+            encoding = serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+            ).decode()
+
+    except Exception as e:
+        print(e)
 
     # api endpoints
     @app.route('/register', methods=['POST'])
@@ -65,7 +87,6 @@ def create_app(test_config=None):
         result = next(dbResponse, None)
 
         if result:
-            # print("Data found:", result)
             response["status"] = 200
 
         # print(dbResponse)
@@ -74,9 +95,10 @@ def create_app(test_config=None):
            
         return jsonify(response)
 
-    @app.route('/login', methods=['POST'])
+    @app.route('/login', methods=['POST', 'GET'])
     def login():
         data = request.get_json()
+
         email, password = data["email"], data["password"] # TODO: Decrypt with private key
         print(password)
         encrypted_password_bytes = base64.b64decode(password)
@@ -91,8 +113,7 @@ def create_app(test_config=None):
         if not result:
             print("not found")
             return jsonify(response)
-        print("email found")
-        # dbPassword = dbResponse[0]["password"]
+
         dbPassword = result["password"]
         print(dbPassword)
 
@@ -109,7 +130,6 @@ def create_app(test_config=None):
             print(decrypted_password)
             if check_password_hash(dbPassword,decrypted_password):
                 response["status"] = 200
-                print("here fail")
         except Exception as e:
             print(e)
             return jsonify(response)

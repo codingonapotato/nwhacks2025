@@ -1,9 +1,11 @@
+import os
 import cv2
 import time
 from backend.detector import detector
 import json
 
-file_name = "gesture.txt"
+
+file_name = os.path.join(os.path.dirname(__file__), "gesture.txt")
 
 # Read JSON from file
 with open(file_name, "r") as file:
