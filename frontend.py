@@ -116,6 +116,7 @@ class MainWindow(QWidget):
                 login_fail_Notif.setText("Login failed, try again!")
                 login_fail_Notif.setIcon(QMessageBox.Critical)
                 login_fail_Notif.exec_()
+                self.goBackToMainMenu()
             print(login_response)
         except Exception as e: 
             print(e)
