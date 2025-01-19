@@ -27,3 +27,15 @@ Best project ever
 # Flask Server IP
 http://52.91.85.117:5000
 
+# Default network settings
+1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol
+2. On EC2 Windows modify firewall configuration
+          Open Windows Firewall -> find Windows Defender Firewall
+          Create new Inbound Rule:
+                 Rule Type: Select Port and click Next
+                 Protocol and Ports: Select TCP
+                 local ports field: enter port 5000
+                 Click Next -> Allow Domain, Private and Public
+                 Save the rule
+          
+4. Under MongoDB, Security -> Network Access -> add Access List Entry :**0.0.0.0/0**
