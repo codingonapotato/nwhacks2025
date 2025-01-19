@@ -12,6 +12,13 @@ class detector():
         self.mpDraw = mp.solutions.drawing_utils
         self.results = None
 
+    def getWristX(self, handNo=0):
+        if self.results.multi_hand_landmarks:
+            myHand = self.results.multi_hand_landmarks[handNo]
+            wrist_base = myHand.landmark[0]
+            return wrist_base.x
+        return None
+
     def findHands(self, img):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)    # mediapipe hand can only process RGB image
