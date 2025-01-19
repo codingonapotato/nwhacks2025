@@ -24,6 +24,15 @@ def create_app(test_config=None):
     @app.route('/register', methods=['POST'])
     def registerUser():
         data = request.get_json()
+        email, password = data # TODO: Decrypt with private key
+        response = {
+            "message" : {"email" : email, "password" : password}, 
+            "status" : 404
+        }
+        result = passwordsDB.insert_one({"email" : email, "password": generate_password_hash(password)})
+        if result.inserted_id:
+            response["status"] = 200
+        return jsonify(response)
 
     @app.route('/check-user', methods=['POST'])
     def checkUser():
