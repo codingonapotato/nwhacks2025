@@ -3,9 +3,9 @@ from flaskr.constants import *
 import flaskr.db as db
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from werkzeug.local import LocalProxy
+from werkzeug.security import generate_password_hash
 from flaskr.db import *
-from flask import Flask
+from flask import Flask, request, jsonify
 
 def create_app(test_config=None):
     # load values from .env
@@ -18,13 +18,26 @@ def create_app(test_config=None):
     db.mongoClient.append(MongoClient(os.environ[MONGO_URI]))
     
     database = db.mongoClient[0].get_database("passwords")
-    passwords = database.get_collection("passwords")
-    passwords.insert_one({"bob@netgear.com" : "Yapyapyapyap"})
-    print("Yippee I did it")
+    passwordsDB = database.get_collection("passwords")
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    # api endpoints
+    @app.route('/register', methods=['POST'])
+    def registerUser():
+        data = request.get_json()
 
+    @app.route('/check-user', methods=['POST'])
+    def checkUser():
+        response = {
+            "message" : data["email"], 
+            "status" : 404
+        }
+        data = request.get_json()
+        email = passwordsDB.find(data["email"]).toArray()
+        if email:
+            response["status"] = 200
+        return jsonify(response)
+
+    @app.route('/login', methods=['POST'])
+    def login():
+        data = request.get_json()
     return app
