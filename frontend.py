@@ -90,8 +90,8 @@ class MainWindow(QWidget):
         # self.setPassword1()
         email = self.usernameField.text().strip()
         try: 
-            password = slapper.main()
-            # password = "1230"
+            # password = slapper.main()
+            password = "1230"
             with open('public_key.pem', "rb") as f:    # read in binary 
                 public_key = f.read()
                 public_key = serialization.load_pem_public_key(public_key)
@@ -105,6 +105,17 @@ class MainWindow(QWidget):
     )
             encrypted_password_base64 = base64.b64encode(encrypted_password).decode('utf-8')
             login_response = self.request_sender.login(email, encrypted_password_base64)
+            if login_response['status'] == 200:
+                login_success_Notif = QMessageBox()
+                login_success_Notif.setText("Login successful, congrads!!")
+                login_success_Notif.setIcon(QMessageBox.Information)
+                login_success_Notif.exec_()
+                self.goBackToMainMenu()
+            else:
+                login_fail_Notif = QMessageBox()
+                login_fail_Notif.setText("Login failed, you suck!")
+                login_fail_Notif.setIcon(QMessageBox.Critical)
+                login_fail_Notif.exec_()
             print(login_response)
         except Exception as e: 
             print(e)
@@ -168,11 +179,20 @@ class MainWindow(QWidget):
                 with open("public_key.pem", "w") as f:
                     f.write(public_key)
                 print("Public key saved locally")
+                register_success_Notif = QMessageBox()
+                register_success_Notif.setText("Registration successful, redirecting back to home page.")
+                register_success_Notif.setIcon(QMessageBox.Information)
+                register_success_Notif.exec_()
+                self.goBackToMainMenu()
             except Exception as e: 
+                register_fail_Notif = QMessageBox()
+                register_fail_Notif.setText("Registration failed, redirecting back to home page.")
+                register_fail_Notif.setIcon(QMessageBox.Critical)
+                register_fail_Notif.exec_()
+                self.goBackToMainMenu()
                 print(e)
         # TODO redirect to main page after successful registraton
         
-        self.setMainMenu()
 
 
     def checkValidPassword(self):
@@ -223,7 +243,7 @@ class MainWindow(QWidget):
 
             try: 
                 login_response = self.request_sender.check_user(first_user_email)
-                print(login_response)
+                # print(login_response)
                 if login_response['status'] == 200:
                     invalid_Notif = QMessageBox()
                     invalid_Notif.setText("Email already in use. Please try another one")
