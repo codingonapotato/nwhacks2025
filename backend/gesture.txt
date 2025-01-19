@@ -1,0 +1,7 @@
+{
+    "Left_infinity": 0,
+    "Left_six": 1,
+    "Right_spider": 2,
+    "Left_peace": 3,
+    "invalid": 5
+}

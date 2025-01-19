@@ -1,7 +1,0 @@
-{
-        "Left_peace": 0,
-        "Right_peace": 1,
-        "Left_infinity": 2,
-        "Right_infinity": 3,
-        "invalid": 5
-    }

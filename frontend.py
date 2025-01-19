@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout, QHBoxLayout
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QTransform
 import sys
 # import slapper #TODO: update name 
+import os
 import json
 
 class MainWindow(QWidget):
@@ -164,13 +165,20 @@ class MainWindow(QWidget):
         
         images = ["images/infinity.jpg", "images/peace.jpg", "images/six.jpg", "images/spider.jpg"]
         for path in images:
-            imageLabel = QLabel()
             pixmap = QPixmap(path)
-            pixmap = pixmap.scaled(80, 80)
-            imageLabel.setPixmap(pixmap)
+
+            # Manually rotate the pixmap by 90 degrees clockwise
+            # transform = QTransform().rotate(90)
+            rotated_pixmap = pixmap.transformed(QTransform().rotate(90))
+
+            # Scale the pixmap and display it in a QLabel
+            rotated_pixmap = rotated_pixmap.scaled(80, 80)
+            imageLabel = QLabel()
+            imageLabel.setPixmap(rotated_pixmap)
             imageLayout.addWidget(imageLabel)
             
-        passwordPage.addRow("Images", imageLayout)
+        passwordPage.addRow(imageLayout)
+        passwordWidget_1.setLayout(passwordPage)
         
         infoLabel_1 = QLabel("Select 4 possible symbols to work with")
         passwordPage.addRow(infoLabel_1)
@@ -182,18 +190,18 @@ class MainWindow(QWidget):
         # passwordPage.addWidget(symbol_label_1)
         passwordPage.addRow(symbol_label_0)
         
-        hand_0 = QComboBox()
-        hand_0.addItem("Right Hand")
-        hand_0.addItem("Left Hand")
+        self.hand_0 = QComboBox()
+        self.hand_0.addItem("Right")
+        self.hand_0.addItem("Left")
         # passwordPage.addWidget(hand_1)
-        passwordPage.addRow(hand_0)
+        passwordPage.addRow(self.hand_0)
         
-        symbol_1 = QComboBox()
-        symbol_1.addItem("Peace")
-        symbol_1.addItem("Infinity")
-        symbol_1.addItem("Six")
-        symbol_1.addItem("Spider")
-        passwordPage.addRow(symbol_1)
+        self.symbol_0 = QComboBox()
+        self.symbol_0.addItem("peace")
+        self.symbol_0.addItem("infinity")
+        self.symbol_0.addItem("six")
+        self.symbol_0.addItem("spider")
+        passwordPage.addRow(self.symbol_0)
         passwordPage.addRow(QLabel()) # for spacing
         
         
@@ -202,18 +210,18 @@ class MainWindow(QWidget):
         # passwordPage.addWidget(symbol_label_1)
         passwordPage.addRow(symbol_label_1)
         
-        hand_1 = QComboBox()
-        hand_1.addItem("Right Hand")
-        hand_1.addItem("Left Hand")
+        self.hand_1 = QComboBox()
+        self.hand_1.addItem("Right")
+        self.hand_1.addItem("Left")
         # passwordPage.addWidget(hand_1)
-        passwordPage.addRow(hand_1)
+        passwordPage.addRow(self.hand_1)
         
-        symbol_1 = QComboBox()
-        symbol_1.addItem("Peace")
-        symbol_1.addItem("Infinity")
-        symbol_1.addItem("Six")
-        symbol_1.addItem("Spider")
-        passwordPage.addRow(symbol_1)
+        self.symbol_1 = QComboBox()
+        self.symbol_1.addItem("peace")
+        self.symbol_1.addItem("infinity")
+        self.symbol_1.addItem("six")
+        self.symbol_1.addItem("spider")
+        passwordPage.addRow(self.symbol_1)
         passwordPage.addRow(QLabel()) # for spacing
         
         #THIRD VALUE
@@ -221,18 +229,18 @@ class MainWindow(QWidget):
         # passwordPage.addWidget(symbol_label_1)
         passwordPage.addRow(symbol_label_2)
         
-        hand_2 = QComboBox()
-        hand_2.addItem("Right Hand")
-        hand_2.addItem("Left Hand")
+        self.hand_2 = QComboBox()
+        self.hand_2.addItem("Right")
+        self.hand_2.addItem("Left")
         # passwordPage.addWidget(hand_1)
-        passwordPage.addRow(hand_2)
+        passwordPage.addRow(self.hand_2)
         
-        symbol_2 = QComboBox()
-        symbol_2.addItem("Peace")
-        symbol_2.addItem("Infinity")
-        symbol_2.addItem("Six")
-        symbol_2.addItem("Spider")
-        passwordPage.addRow(symbol_2)
+        self.symbol_2 = QComboBox()
+        self.symbol_2.addItem("peace")
+        self.symbol_2.addItem("infinity")
+        self.symbol_2.addItem("six")
+        self.symbol_2.addItem("spider")
+        passwordPage.addRow(self.symbol_2)
         passwordPage.addRow(QLabel()) # for spacing
         
         #FOURTH VALUE
@@ -240,19 +248,24 @@ class MainWindow(QWidget):
         # passwordPage.addWidget(symbol_label_1)
         passwordPage.addRow(symbol_label_3)
         
-        hand_3 = QComboBox()
-        hand_3.addItem("Right Hand")
-        hand_3.addItem("Left Hand")
+        self.hand_3 = QComboBox()
+        self.hand_3.addItem("Right")
+        self.hand_3.addItem("Left")
         # passwordPage.addWidget(hand_1)
-        passwordPage.addRow(hand_3)
+        passwordPage.addRow(self.hand_3)
         
-        symbol_3 = QComboBox()
-        symbol_3.addItem("Peace")
-        symbol_3.addItem("Infinity")
-        symbol_3.addItem("Six")
-        symbol_3.addItem("Spider")
-        passwordPage.addRow(symbol_3)
+        self.symbol_3 = QComboBox()
+        self.symbol_3.addItem("peace")
+        self.symbol_3.addItem("infinity")
+        self.symbol_3.addItem("six")
+        self.symbol_3.addItem("spider")
+        passwordPage.addRow(self.symbol_3)
         passwordPage.addRow(QLabel()) # for spacing
+        
+        
+        submitButton = QPushButton("Submit")
+        passwordPage.addWidget(submitButton)
+        submitButton.clicked.connect(self.submitGestures)
         
         
         passwordWidget_1.setLayout(passwordPage) 
@@ -261,16 +274,77 @@ class MainWindow(QWidget):
         
         self.stackedWidget.setCurrentWidget(passwordWidget_1)
         
+    def submitGestures(self):
+        slot0 = self.symbol_0.currentText()
+        slot1 = self.symbol_1.currentText()
+        slot2 = self.symbol_2.currentText()
+        slot3 = self.symbol_3.currentText()
         
-    
-        
-        
-        
-        
-        
-        
-    
+        invalid_Notif = QMessageBox()
+        invalid_Notif.setText("Overlap Binding detected. Please ensure that no slots use the same sign")
+        invalid_Notif.setIcon(QMessageBox.Critical)
 
+        
+        if slot0 == slot1 or slot0 == slot2 or slot0 == slot3:
+            print("error") #TODO: HAVE POP UP SAY THAT CAN'T BE THE SAME
+            invalid_Notif.exec_()
+        elif slot1 == slot2 or slot1 == slot3:
+            print("error") #TODO: HAVE POP UP SAY THAT CAN'T BE THE SAME
+            invalid_Notif.exec_()
+        elif slot2 == slot3:
+            print("error")
+            invalid_Notif.exec_()
+        else:
+            self.saveMapping()
+            
+    def saveMapping(self):
+        hand_0 = self.hand_0.currentText()
+        hand_1 = self.hand_1.currentText()
+        hand_2 = self.hand_2.currentText()
+        hand_3 = self.hand_3.currentText()
+        
+        handList = [hand_0, hand_1, hand_2, hand_3]
+        
+        #Swap mapping of hands 
+        for i in range(len(handList)):
+            if handList[i] == "Right":
+                handList[i] = "Left"
+            else:
+                handList[i] = "Right"
+                
+        hand_0, hand_1, hand_2, hand_3 = handList
+        
+        sym0 = self.symbol_0.currentText()
+        sym1 = self.symbol_1.currentText()
+        sym2 = self.symbol_2.currentText()
+        sym3 = self.symbol_3.currentText()
+        
+        slot0 = hand_0 + "_" + sym0
+        slot1 = hand_1 + "_" + sym1
+        slot2 = hand_2 + "_" + sym2
+        slot3 = hand_3 + "_" + sym3
+        
+        print(slot0, slot1, slot2, slot3)
+        
+        bindings = {
+            slot0: 0,
+            slot1: 1,
+            slot2: 2,
+            slot3: 3,
+            "invalid": 5
+        }
+        
+        curr_dir = os.getcwd()
+        path_to_gestures = os.path.join(curr_dir,"backend","gesture.txt")
+        
+        try:
+            with open(path_to_gestures, "w") as file:
+                json.dump(bindings, file, indent=4)
+        except Exception as e:
+                print(e)
+        
+        
+        
 
 
 app = QApplication(sys.argv) 
