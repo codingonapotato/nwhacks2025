@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout, QHBoxLayout
+from PyQt5.QtGui import QPixmap
 import sys
 # import slapper #TODO: update name 
 import json
@@ -152,12 +153,24 @@ class MainWindow(QWidget):
 # password : "blahblahblah"
 # }
 
+    #TODO: REMEMBER THAT RIGHT AND LEFT ARE MIRRORED
     # First password screen 
     def setPassword1(self):
         passwordWidget_1 = QWidget()
         # passwordPage = QVBoxLayout() # Create vertical box layout
         passwordPage = QFormLayout()
         
+        imageLayout = QHBoxLayout()
+        
+        images = ["images/infinity.jpg", "images/peace.jpg", "images/six.jpg", "images/spider.jpg"]
+        for path in images:
+            imageLabel = QLabel()
+            pixmap = QPixmap(path)
+            pixmap = pixmap.scaled(80, 80)
+            imageLabel.setPixmap(pixmap)
+            imageLayout.addWidget(imageLabel)
+            
+        passwordPage.addRow("Images", imageLayout)
         
         infoLabel_1 = QLabel("Select 4 possible symbols to work with")
         passwordPage.addRow(infoLabel_1)
