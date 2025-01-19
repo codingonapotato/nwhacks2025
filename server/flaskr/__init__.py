@@ -24,7 +24,7 @@ def create_app(test_config=None):
     @app.route('/register', methods=['POST'])
     def registerUser():
         data = request.get_json()
-        email, password = data # TODO: Decrypt with private key
+        email, password = data["email"], data["password"] # TODO: Decrypt with private key
         response = {
             "message" : {"email" : email, "password" : password}, 
             "status" : 404
@@ -49,7 +49,7 @@ def create_app(test_config=None):
     @app.route('/login', methods=['POST'])
     def login():
         data = request.get_json()
-        email, password = data # TODO: Decrypt with private key
+        email, password = data["email"], data["password"] # TODO: Decrypt with private key
         response = {
             "message" : {"email" : email, "password" : password}, 
             "status" : 404
