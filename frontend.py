@@ -1,7 +1,8 @@
 import base64
 import os
 import re
-from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout, QHBoxLayout
+from PyQt5.QtGui import QPixmap, QTransform
 import sys
 import backend.slapper as slapper #TODO: update name 
 import json
@@ -46,7 +47,8 @@ class MainWindow(QWidget):
         registerLabel = QLabel("New User? Create an account:")
         mainLayout.addWidget(registerLabel)
         registerFlowButton = QPushButton("Register")
-        registerFlowButton.clicked.connect(self.createRegisterUserPage)
+        # registerFlowButton.clicked.connect(self.createRegisterUserPage)
+        registerFlowButton.clicked.connect(self.setPassword1)
         mainLayout.addWidget(registerFlowButton)
         
         mainMenuWidget.setLayout(mainLayout)
@@ -107,7 +109,7 @@ class MainWindow(QWidget):
             login_response = self.request_sender.login(email, encrypted_password_base64)
             if login_response['status'] == 200:
                 login_success_Notif = QMessageBox()
-                login_success_Notif.setText("Login successful, congrads!!")
+                login_success_Notif.setText("Login successful, congrats!!")
                 login_success_Notif.setIcon(QMessageBox.Information)
                 login_success_Notif.exec_()
                 self.goBackToMainMenu()
@@ -449,6 +451,8 @@ class MainWindow(QWidget):
         try:
             with open(path_to_gestures, "w") as file:
                 json.dump(bindings, file, indent=4)
+
+                self.createRegisterUserPage()
         except Exception as e:
                 print(e)
         
