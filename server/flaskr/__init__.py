@@ -20,7 +20,20 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     # configure connection to MongoDB
-    db.mongoClient.append(MongoClient(os.environ[MONGO_URI]))
+    # this is on EC2
+    # client = MongoClient(
+    #     os.environ[MONGO_URI],
+    #     ssl=True,
+    #     tlsCAFile="C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\certifi\\cacert.pem"
+    # )
+
+
+    # this locally
+    client = MongoClient(
+    os.environ[MONGO_URI]
+    )
+
+    db.mongoClient.append(client)
     database = db.mongoClient[0].get_database("passwords")
     passwordsDB = database.get_collection("passwords")
 
@@ -59,6 +72,10 @@ def create_app(test_config=None):
     except Exception as e:
         print(e)
 
+    @app.route('/')
+    def default():
+        message = {'message': 'hello'}
+        return jsonify(message)
     # api endpoints
     @app.route('/register', methods=['POST'])
     def registerUser():

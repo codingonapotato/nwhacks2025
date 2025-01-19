@@ -13,7 +13,8 @@ from cryptography.hazmat.primitives import serialization
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
+        # self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
+        self.request_sender = requestSender.RequestSender("http://52.91.85.117:5000")    # connect to EC2 instance 
 
         self.setWindowTitle("<INSERT NAME HERE>") # TODO: COME UP WITH A CREATIVE NAME 
         
@@ -84,16 +85,13 @@ class MainWindow(QWidget):
         self.stackedWidget.setCurrentIndex(0)
     
         
-        
-    
-    
     # TODO: Add implementation so that it checks that the username exists    
     def checkUserExists(self):
         # self.setPassword1()
         email = self.usernameField.text().strip()
         try: 
-            # password = slapper.main()
-            password = "1230"
+            password = slapper.main()
+            # password = "1230"
             with open('public_key.pem', "rb") as f:    # read in binary 
                 public_key = f.read()
                 public_key = serialization.load_pem_public_key(public_key)
