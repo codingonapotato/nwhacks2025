@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox
 import sys
 
 class MainWindow(QWidget):
@@ -18,10 +18,6 @@ class MainWindow(QWidget):
         init_Layout.addWidget(self.stackedWidget)
         self.setLayout(init_Layout)
         
-        
-
-    def loginMain(self):
-        self.result_label.setText(f"Hello, {username}!")
     
     
     # Function to set the Main Menu (initial screen)    
@@ -39,6 +35,7 @@ class MainWindow(QWidget):
         registerLabel = QLabel("New User? Create an account:")
         mainLayout.addWidget(registerLabel)
         registerFlowButton = QPushButton("Register")
+        registerFlowButton.clicked.connect(self.createRegisterUserPage)
         mainLayout.addWidget(registerFlowButton)
         
         mainMenuWidget.setLayout(mainLayout)
@@ -55,11 +52,15 @@ class MainWindow(QWidget):
         
         userLabel = QLabel("Enter Email below")
         login1.addWidget(userLabel)
-        usernameField = QLineEdit()
-        login1.addWidget(usernameField)
+        self.usernameField = QLineEdit()
+        login1.addWidget(self.usernameField)
         loginFlowButton = QPushButton("Next")
         login1.addWidget(loginFlowButton)
-        # self.submit_button.clicked.connect(self.submit)
+        loginFlowButton.clicked.connect(self.checkUserExists) # check user exists function then checks
+        
+        goBackButton = QPushButton("Cancel")
+        login1.addWidget(goBackButton)
+        goBackButton.clicked.connect(self.goBackToMainMenu)
 
         loginWidget_1.setLayout(login1) 
         
@@ -67,7 +68,75 @@ class MainWindow(QWidget):
         
         self.stackedWidget.setCurrentWidget(loginWidget_1)
         
-    def 
+    
+    # Function to go back to main menu screen 
+    def goBackToMainMenu(self):
+        self.stackedWidget.setCurrentIndex(0)
+    
+        
+        
+    
+    
+    # TODO: Add implementation so that it checks that the username exists    
+    def checkUserExists(self):
+        userName = self.usernameField.text()
+        print(userName)
+        # TODO: make it call the next screen
+        
+    # Function to set the Registration page   
+    def createRegisterUserPage(self):
+        registerWidget = QWidget()
+        registerPage = QVBoxLayout() # Create vertical box layout
+        
+        userLabel_1 = QLabel("Enter Email below:")
+        registerPage.addWidget(userLabel_1)
+        self.user_email_field = QLineEdit()
+        registerPage.addWidget(self.user_email_field)
+        
+        userLabel_2 = QLabel("Confirm your email:")
+        registerPage.addWidget(userLabel_2)
+        self.user_email_confirmation = QLineEdit()
+        registerPage.addWidget(self.user_email_confirmation)
+        
+        nextButton = QPushButton("Next")
+        registerPage.addWidget(nextButton)
+        nextButton.clicked.connect(self.checkValidEmail)
+        
+        goBackButton = QPushButton("Cancel")
+        registerPage.addWidget(goBackButton)
+        goBackButton.clicked.connect(self.goBackToMainMenu)
+        
+        
+        
+        # loginFlowButton = QPushButton("Next")
+        # login1.addWidget(loginFlowButton)
+        # loginFlowButton.clicked.connect(self.checkUserExists) # check user exists function then checks
+
+        registerWidget.setLayout(registerPage) 
+        
+        self.stackedWidget.addWidget(registerWidget)
+        
+        self.stackedWidget.setCurrentWidget(registerWidget)
+        
+        
+    def checkValidEmail(self):
+        first_user_email = self.user_email_field.text()
+        second_user_email = self.user_email_confirmation.text()
+        if first_user_email == "" or second_user_email == "":
+            invalid_Notif = QMessageBox()
+            invalid_Notif.setText("Invalid email detected. Please try again")
+            invalid_Notif.setIcon(QMessageBox.Critical)
+            invalid_Notif.exec_()
+        elif first_user_email != second_user_email:
+            mismatch_Notif = QMessageBox()
+            mismatch_Notif.setText("Emails do not match! Please try again")
+            mismatch_Notif.setIcon(QMessageBox.Critical)
+            mismatch_Notif.exec_()
+        ## TODO: add case to check if email exists 
+        else:
+            print("Match!")
+        
+    
 
 
 
