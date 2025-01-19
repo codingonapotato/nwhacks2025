@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout
 import sys
-import slapper
+# import slapper #TODO: update name 
+import json
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -80,12 +81,11 @@ class MainWindow(QWidget):
     
     # TODO: Add implementation so that it checks that the username exists    
     def checkUserExists(self):
-        # userName = self.usernameField.text()
-        # print(userName)
-        try: 
-            slapper.main()
-        except Exception as e: 
-            print(e)
+        self.setPassword1()
+        # try: 
+        #     slapper.main()
+        # except Exception as e: 
+        #     print(e)
         
         # TODO: make it call the next screen
         
@@ -138,15 +138,129 @@ class MainWindow(QWidget):
             mismatch_Notif.setText("Emails do not match! Please try again")
             mismatch_Notif.setIcon(QMessageBox.Critical)
             mismatch_Notif.exec_()
-        ## TODO: add case to check if email exists 
         else:
-            print("Match!")
+             ## TODO: add case to check if email exists 
+            email = {
+                "email": first_user_email
+            }
+            valToSend = json.dumps(email)
+            # TODO: call function to check if emai exists 
+            # print("Match!")
+            
+# {
+# email : "bob@netgear.com",
+# password : "blahblahblah"
+# }
+
+    # First password screen 
+    def setPassword1(self):
+        passwordWidget_1 = QWidget()
+        # passwordPage = QVBoxLayout() # Create vertical box layout
+        passwordPage = QFormLayout()
+        
+        
+        infoLabel_1 = QLabel("Select 4 possible symbols to work with")
+        passwordPage.addRow(infoLabel_1)
+        passwordPage.addRow(QLabel()) # for spacing
+        
+        
+        # FIRST VALUE
+        symbol_label_0 = QLabel("Symbol for Value of 0:")
+        # passwordPage.addWidget(symbol_label_1)
+        passwordPage.addRow(symbol_label_0)
+        
+        hand_0 = QComboBox()
+        hand_0.addItem("Right Hand")
+        hand_0.addItem("Left Hand")
+        # passwordPage.addWidget(hand_1)
+        passwordPage.addRow(hand_0)
+        
+        symbol_1 = QComboBox()
+        symbol_1.addItem("Peace")
+        symbol_1.addItem("Infinity")
+        symbol_1.addItem("Six")
+        symbol_1.addItem("Spider")
+        passwordPage.addRow(symbol_1)
+        passwordPage.addRow(QLabel()) # for spacing
+        
+        
+        #SECOND VALUE
+        symbol_label_1 = QLabel("Symbol for Value of 1:")
+        # passwordPage.addWidget(symbol_label_1)
+        passwordPage.addRow(symbol_label_1)
+        
+        hand_1 = QComboBox()
+        hand_1.addItem("Right Hand")
+        hand_1.addItem("Left Hand")
+        # passwordPage.addWidget(hand_1)
+        passwordPage.addRow(hand_1)
+        
+        symbol_1 = QComboBox()
+        symbol_1.addItem("Peace")
+        symbol_1.addItem("Infinity")
+        symbol_1.addItem("Six")
+        symbol_1.addItem("Spider")
+        passwordPage.addRow(symbol_1)
+        passwordPage.addRow(QLabel()) # for spacing
+        
+        #THIRD VALUE
+        symbol_label_2 = QLabel("Symbol for Value of 2:")
+        # passwordPage.addWidget(symbol_label_1)
+        passwordPage.addRow(symbol_label_2)
+        
+        hand_2 = QComboBox()
+        hand_2.addItem("Right Hand")
+        hand_2.addItem("Left Hand")
+        # passwordPage.addWidget(hand_1)
+        passwordPage.addRow(hand_2)
+        
+        symbol_2 = QComboBox()
+        symbol_2.addItem("Peace")
+        symbol_2.addItem("Infinity")
+        symbol_2.addItem("Six")
+        symbol_2.addItem("Spider")
+        passwordPage.addRow(symbol_2)
+        passwordPage.addRow(QLabel()) # for spacing
+        
+        #FOURTH VALUE
+        symbol_label_3 = QLabel("Symbol for Value of 3:")
+        # passwordPage.addWidget(symbol_label_1)
+        passwordPage.addRow(symbol_label_3)
+        
+        hand_3 = QComboBox()
+        hand_3.addItem("Right Hand")
+        hand_3.addItem("Left Hand")
+        # passwordPage.addWidget(hand_1)
+        passwordPage.addRow(hand_3)
+        
+        symbol_3 = QComboBox()
+        symbol_3.addItem("Peace")
+        symbol_3.addItem("Infinity")
+        symbol_3.addItem("Six")
+        symbol_3.addItem("Spider")
+        passwordPage.addRow(symbol_3)
+        passwordPage.addRow(QLabel()) # for spacing
+        
+        
+        passwordWidget_1.setLayout(passwordPage) 
+        
+        self.stackedWidget.addWidget(passwordWidget_1)
+        
+        self.stackedWidget.setCurrentWidget(passwordWidget_1)
+        
+        
+    
+        
+        
+        
+        
+        
         
     
 
 
 
-app = QApplication(sys.argv) # sys.argv makes it so that it can accept command line arguments but is optional
+app = QApplication(sys.argv) 
 window = MainWindow()
 window.show()
 sys.exit(app.exec_())
