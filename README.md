@@ -17,9 +17,10 @@ Best project ever
        - `pip install certifi`<br>
        - `python -c "import certifi; print(certifi.where())"`<br>
        - with path in Flask file:<br>
-             from pymongo import MongoClient<br>
+
+             from pymongo import MongoClient
              client = MongoClient(
-                 "mongodb+srv://<your-username>:<your-password>@gesture-pw-db.zu1ec.mongodb.net/<your-database>",
+                 "mongodb+srv://&lt;your-username&gt;:&lt;your-password&gt;@gesture-pw-db.zu1ec.mongodb.net/<your-database>",
                  ssl=True,
                  tlsCAFile="C:<path to your certifi>\\certifi\\cacert.pem"
              )<br>
