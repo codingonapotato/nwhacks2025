@@ -6,17 +6,21 @@ class RequestSender:
         self.server_url = server_url
 
     def _make_request(self, endpoint, data, method='POST'):    # make this private
+        headers = {'content-Type': 'application/json'}
         try:
             if method == 'POST':
-                response = requests.post(f'{self.server_url}/{endpoint}', data=data)
+                response = requests.post(f'{self.server_url}/{endpoint}', json=data, headers=headers)
+                print(response)
             elif method == 'GET':
-                response = requests.get(f'{self.server_url}/{endpoint}', params=data)
+                response = requests.get(f'{self.server_url}/{endpoint}', json=data, headers=headers)
             else:
                 raise ValueError("Unsupported HTTP method: Use 'POST' or 'GET'.")
             
             # Raise exception for bad status codes (4xx, 5xx)
             response.raise_for_status()
-            return response.json()
+            data = response.json()
+            print("Response JSON:", data)
+            return data
         
         except HTTPError as http_err:
             return {"error": f"HTTP error occurred: {http_err}"}
@@ -35,10 +39,10 @@ class RequestSender:
 
     def registration(self, email, password):
         register_data = {'email': email, 'password': password}
+        print(register_data)
         return self._make_request('register', register_data)
 
     def login(self, email, password):
         login_data = {'email': email, 'password': password}
         return self._make_request('login', login_data)
-
 

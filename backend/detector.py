@@ -137,37 +137,37 @@ class detector():
         return False
 
 
-def main():
-    cap = cv2.VideoCapture(1)
-    detector = detector()
+# def main():
+#     cap = cv2.VideoCapture(1)
+#     detector = detector()
     
-    while True:
-        success, img = cap.read()
-        img = detector.findHands(img)
+#     while True:
+#         success, img = cap.read()
+#         img = detector.findHands(img)
 
-        finger_curls= detector.checkFingersCurled()
-        handedness = detector.checkHandedness()
-        palm_back_facing = detector.checkPalmOrBack()
-        crossed = detector.checkFingersCrossed(finger1=8, finger2=12)  # Thumb and index
-        # print(f"Handedness: {handedness}")
-        # print(f"Palm/Back: {palm_back_facing}")
-        # print(f"Fingers Curl: {finger_curls}")
-        # print(f"Fingers crossed: {crossed}")
+#         finger_curls= detector.checkFingersCurled()
+#         handedness = detector.checkHandedness()
+#         palm_back_facing = detector.checkPalmOrBack()
+#         crossed = detector.checkFingersCrossed(finger1=8, finger2=12)  # Thumb and index
+#         # print(f"Handedness: {handedness}")
+#         # print(f"Palm/Back: {palm_back_facing}")
+#         # print(f"Fingers Curl: {finger_curls}")
+#         # print(f"Fingers crossed: {crossed}")
             
-        # Detect specific signs
-        if finger_curls == [0, 0, 1, 1, 0] and not crossed:
-            print("Spider sign detected")
-        elif finger_curls == [1, 0, 0, 1, 1] and not crossed:
-            print("Peace sign detected")
-        elif finger_curls == [1, 0, 0, 1, 1] and crossed:
-            print("Infinity sign detected")
-        elif finger_curls == [0, 1, 1, 1, 0] and not crossed:
-            print("Six sign detected")
+#         # Detect specific signs
+#         if finger_curls == [0, 0, 1, 1, 0] and not crossed:
+#             print("Spider sign detected")
+#         elif finger_curls == [1, 0, 0, 1, 1] and not crossed:
+#             print("Peace sign detected")
+#         elif finger_curls == [1, 0, 0, 1, 1] and crossed:
+#             print("Infinity sign detected")
+#         elif finger_curls == [0, 1, 1, 1, 0] and not crossed:
+#             print("Six sign detected")
         
-        cv2.imshow("Image", img)
-        cv2.waitKey(1)
+#         cv2.imshow("Image", img)
+#         cv2.waitKey(1)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
