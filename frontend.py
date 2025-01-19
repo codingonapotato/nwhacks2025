@@ -187,7 +187,7 @@ class MainWindow(QWidget):
                     public_key = f.read()
                     public_key = serialization.load_pem_public_key(public_key)
                 encrypted_password = public_key.encrypt(
-                    valid_password.encode(),  # Convert password to bytes
+                    self.user_password_registration.text().encode(),  # Convert password to bytes
                     padding.OAEP(
                     mgf=padding.MGF1(algorithm=hashes.SHA256()),
                     algorithm=hashes.SHA256(),
@@ -195,7 +195,7 @@ class MainWindow(QWidget):
                     ))
                 encrypted_password_base64 = base64.b64encode(encrypted_password).decode('utf-8')
 
-                register_response = self.request_sender.registration(self.user_email_field.text(), encrypted_password_base64 = base64.b64encode(encrypted_password).decode('utf-8'))
+                register_response = self.request_sender.registration(self.user_email_field.text(), encrypted_password_base64)
                 # public_key = register_response['message']['public_key']
                 # print(public_key)
                 # with open("public_key.pem", "w") as f:
