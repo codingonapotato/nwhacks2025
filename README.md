@@ -10,3 +10,33 @@ Best project ever
 
 # Steps to deactivate virtual environment
 1. Run `deactivate`
+
+# Steps to setup SSL Certificates
+1. On MacOs run: `open "/Applications/Python <YOUR PYTHON VERSION>/Install Certificates.command"`<br>
+2. On Windows run:<br>
+       - `pip install certifi`<br>
+       - `python -c "import certifi; print(certifi.where())"`<br>
+       - with path in Flask file:<br>
+
+             from pymongo import MongoClient
+             client = MongoClient(
+                 "mongodb+srv://&lt;your-username&gt;:&lt;your-password&gt;@gesture-pw-db.zu1ec.mongodb.net/<your-database>",
+                 ssl=True,
+                 tlsCAFile="C:<path to your certifi>\\certifi\\cacert.pem"
+             )<br>
+
+# Flask Server IP
+http://52.91.85.117:5000
+
+# Default network settings
+1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol<br>
+2. On EC2 Windows modify firewall configuration<br>
+          Open Windows Firewall -> find Windows Defender Firewall<br>
+          Create new Inbound Rule:<br>
+                 Rule Type: Select Port and click Next<br>
+                 Protocol and Ports: Select TCP<br>
+                 local ports field: enter port 5000<br>
+                 Click Next -> Allow Domain, Private and Public<br>
+                 Save the rule<br>
+          
+4. Under MongoDB, Security -> Network Access -> add Access List Entry :**0.0.0.0/0**
