@@ -4,7 +4,6 @@ import re
 from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QTransform
 import sys
-import backend.slapper as slapper #TODO: update name 
 import json
 import helper.requestSender as requestSender
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -92,6 +91,7 @@ class MainWindow(QWidget):
         # self.setPassword1()
         email = self.usernameField.text().strip()
         try: 
+            import backend.slapper as slapper 
             password = slapper.main()
             # password = "1230"
             with open('public_key.pem', "rb") as f:    # read in binary 
