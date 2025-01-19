@@ -1,6 +1,6 @@
 import cv2
 import time
-from detector import detector
+from backend.detector import detector
 import json
 
 file_name = "gesture.txt"

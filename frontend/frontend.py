@@ -1,10 +1,11 @@
 import base64
+import os
 import re
 from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout
 import sys
-import slapper #TODO: update name 
+import backend.slapper as slapper #TODO: update name 
 import json
-import requestSender
+import helper.requestSender as requestSender
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
@@ -92,9 +93,11 @@ class MainWindow(QWidget):
         # self.setPassword1()
         email = self.usernameField.text().strip()
         try: 
-            # password = slapper.main()
-            password = "00"
-            with open("public_key.pem", "rb") as f:
+            password = slapper.main()
+            # password = "00"
+            public_key_folder = os.path.join(os.path.dirname(__file__), '..', 'public_key')  # Navigate to the parent directory, then into the 'public_key' folder
+            public_key_path = os.path.join(public_key_folder, 'public_key.pem')
+            with open(public_key_path, "rb") as f:    # read in binary 
                 public_key = f.read()
                 public_key = serialization.load_pem_public_key(public_key)
             encrypted_password = public_key.encrypt(

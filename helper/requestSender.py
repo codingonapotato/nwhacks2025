@@ -6,9 +6,9 @@ class RequestSender:
         self.server_url = server_url
 
     def _make_request(self, endpoint, data, method='POST'):    # make this private
+        headers = {'content-Type': 'application/json'}
         try:
             if method == 'POST':
-                response = requests.post(f'{self.server_url}/{endpoint}', data=data)
                 response = requests.post(f'{self.server_url}/{endpoint}', json=data, headers=headers)
                 print(response)
             elif method == 'GET':
@@ -46,20 +46,3 @@ class RequestSender:
         login_data = {'email': email, 'password': password}
         return self._make_request('login', login_data)
 
-
-
-# if __name__ == "__main__":
-#     # Example Usage
-#     request_sender = RequestSender("http://127.0.0.1:5000")
-
-#     # Test Registration
-#     register_response = request_sender.registration("tt@example.com", "00")
-#     # print(register_response)
-
-#     # # Test Check User
-#     # check_response = request_sender.check_user("tet@example.com")
-#     # print(check_response)
-
-#     # # Test Login
-#     # login_response = request_sender.login("test@example.com", "password123")
-#     # print(login_response)
