@@ -1,11 +1,14 @@
 from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout
 import sys
-# import slapper #TODO: update name 
+import slapper #TODO: update name 
 import json
+import requestSender
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
+
         self.setWindowTitle("<INSERT NAME HERE>") # TODO: COME UP WITH A CREATIVE NAME 
         
         self.resize(1000,600)
@@ -81,11 +84,14 @@ class MainWindow(QWidget):
     
     # TODO: Add implementation so that it checks that the username exists    
     def checkUserExists(self):
-        self.setPassword1()
-        # try: 
-        #     slapper.main()
-        # except Exception as e: 
-        #     print(e)
+        # self.setPassword1()
+        email = self.usernameField.text().strip()
+        try: 
+            password = slapper.main()
+            login_response = self.request_sender.login(email, password)
+            print(login_response)
+        except Exception as e: 
+            print(e)
         
         # TODO: make it call the next screen
         

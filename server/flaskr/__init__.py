@@ -29,6 +29,8 @@ def create_app(test_config=None):
             "message" : {"email" : email, "password" : password}, 
             "status" : 404
         }
+        print(email)
+        print(password)
         dbResponse = passwordsDB.insert_one({"email" : email, "password": generate_password_hash(password)})
         if dbResponse.inserted_id:
             response["status"] = 200
@@ -41,9 +43,17 @@ def create_app(test_config=None):
             "message" : data["email"], 
             "status" : 404
         }
+        print(data["email"])
         dbResponse = passwordsDB.find({"email" : data["email"]})
-        if len(list(dbResponse)):
+        result = next(dbResponse, None)
+
+        if result:
+            # print("Data found:", result)
             response["status"] = 200
+
+        # print(dbResponse)
+        # if len(list(dbResponse)):
+        #     response["status"] = 200
            
         return jsonify(response)
 
@@ -56,7 +66,14 @@ def create_app(test_config=None):
             "status" : 404
         }
         dbResponse = passwordsDB.find({"email" : data["email"]})
-        dbPassword = dbResponse[0]["password"]
+        result = next(dbResponse, None)
+
+        if not result:
+            print("not found")
+            return jsonify(response)
+        
+        # dbPassword = dbResponse[0]["password"]
+        dbPassword = result["password"]
 
         if check_password_hash(dbPassword,password):
             response["status"] = 200

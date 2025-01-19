@@ -9,14 +9,18 @@ class RequestSender:
         try:
             if method == 'POST':
                 response = requests.post(f'{self.server_url}/{endpoint}', data=data)
+                response = requests.post(f'{self.server_url}/{endpoint}', json=data, headers=headers)
+                print(response)
             elif method == 'GET':
-                response = requests.get(f'{self.server_url}/{endpoint}', params=data)
+                response = requests.get(f'{self.server_url}/{endpoint}', json=data, headers=headers)
             else:
                 raise ValueError("Unsupported HTTP method: Use 'POST' or 'GET'.")
             
             # Raise exception for bad status codes (4xx, 5xx)
             response.raise_for_status()
-            return response.json()
+            data = response.json()
+            print("Response JSON:", data)
+            return data
         
         except HTTPError as http_err:
             return {"error": f"HTTP error occurred: {http_err}"}
@@ -35,6 +39,7 @@ class RequestSender:
 
     def registration(self, email, password):
         register_data = {'email': email, 'password': password}
+        print(register_data)
         return self._make_request('register', register_data)
 
     def login(self, email, password):
@@ -42,3 +47,19 @@ class RequestSender:
         return self._make_request('login', login_data)
 
 
+
+# if __name__ == "__main__":
+#     # Example Usage
+#     request_sender = RequestSender("http://127.0.0.1:5000")
+
+#     # Test Registration
+#     register_response = request_sender.registration("tt@example.com", "00")
+#     # print(register_response)
+
+#     # # Test Check User
+#     # check_response = request_sender.check_user("tet@example.com")
+#     # print(check_response)
+
+#     # # Test Login
+#     # login_response = request_sender.login("test@example.com", "password123")
+#     # print(login_response)
