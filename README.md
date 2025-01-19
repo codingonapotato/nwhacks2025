@@ -31,9 +31,8 @@ http://52.91.85.117:5000 (changes each time instance run)
 # Run locally vs over EC2
 1. under ../GitHub/nwhacks2025/server/flaskr/__init__.py <br>
    uncomment the following for running server on EC2 instance <br>
-   -configure connection to MongoDB <br>
+   
     **this is on EC2** <br>
-    
     client = MongoClient( <br>
         os.environ[MONGO_URI], <br>
         ssl=True, <br>
@@ -41,17 +40,17 @@ http://52.91.85.117:5000 (changes each time instance run)
     ) <br>
 
     **this locally** <br>
-    
     client = MongoClient( <br>
     os.environ[MONGO_URI] <br>
     ) <br>
 
-2. ../GitHub/nwhacks2025/frontend.py
-   **uncomment the following for running locally**
-   self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
+2. ../GitHub/nwhacks2025/frontend.py <br>
 
-   **this for ec2**
-   self.request_sender = requestSender.RequestSender("http://52.91.85.117:5000")    # connect to EC2 instance
+   **uncomment the following for running locally** <br>
+   self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000") <br>
+
+   **this for ec2** <br>
+   self.request_sender = requestSender.RequestSender("http://52.91.85.117:5000")    # connect to EC2 instance <br>
 
 # Default network settings
 1. On EC2 Under Security add Inbound rule to allow **port 5000** on your EC2 instance from **any IP address (0.0.0.0/0)**, using the **TCP** protocol<br>
