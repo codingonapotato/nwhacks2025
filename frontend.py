@@ -201,11 +201,14 @@ class MainWindow(QWidget):
                 # with open("public_key.pem", "w") as f:
                 #     f.write(public_key)
                 # print("Public key saved locally")
-                register_success_Notif = QMessageBox()
-                register_success_Notif.setText("Registration successful, redirecting back to home page.")
-                register_success_Notif.setIcon(QMessageBox.Information)
-                register_success_Notif.exec_()
-                self.goBackToMainMenu()
+                if register_response["status"] == 200:
+                    register_success_Notif = QMessageBox()
+                    register_success_Notif.setText("Registration successful, redirecting back to home page.")
+                    register_success_Notif.setIcon(QMessageBox.Information)
+                    register_success_Notif.exec_()
+                    self.goBackToMainMenu()
+                else:
+                    raise Exception(f"Registration failed with: {register_response}")
             except Exception as e: 
                 register_fail_Notif = QMessageBox()
                 register_fail_Notif.setText("Registration failed, redirecting back to home page.")
