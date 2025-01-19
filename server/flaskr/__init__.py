@@ -29,24 +29,36 @@ def create_app(test_config=None):
             "message" : {"email" : email, "password" : password}, 
             "status" : 404
         }
-        result = passwordsDB.insert_one({"email" : email, "password": generate_password_hash(password)})
-        if result.inserted_id:
+        dbResponse = passwordsDB.insert_one({"email" : email, "password": generate_password_hash(password)})
+        if dbResponse.inserted_id:
             response["status"] = 200
         return jsonify(response)
 
     @app.route('/check-user', methods=['POST'])
     def checkUser():
+        data = request.get_json()
         response = {
             "message" : data["email"], 
             "status" : 404
         }
-        data = request.get_json()
-        email = passwordsDB.find(data["email"]).toArray()
-        if email:
+        dbResponse = passwordsDB.find({"email" : data["email"]})
+        if dbResponse:
             response["status"] = 200
         return jsonify(response)
 
     @app.route('/login', methods=['POST'])
     def login():
         data = request.get_json()
+        email, password = data # TODO: Decrypt with private key
+        response = {
+            "message" : {"email" : email, "password" : password}, 
+            "status" : 404
+        }
+        dbResponse = passwordsDB.find({"email" : data["email"]})
+        dbPassword = generate_password_hash(dbResponse["password"])
+
+        if dbPassword == password:
+            response = 200
+        return jsonify(response)       
+
     return app
