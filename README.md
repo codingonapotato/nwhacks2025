@@ -10,3 +10,20 @@ Best project ever
 
 # Steps to deactivate virtual environment
 1. Run `deactivate`
+
+# Steps to setup SSL Certificates
+1. On MacOs run: open "/Applications/Python <YOUR PYTHON VERSION>/Install Certificates.command"
+2. On Windows run:
+       pip install certifi
+       python -c "import certifi; print(certifi.where())"
+   with path in Flask file:
+      from pymongo import MongoClient
+      client = MongoClient(
+          "mongodb+srv://<your-username>:<your-password>@gesture-pw-db.zu1ec.mongodb.net/<your-database>",
+          ssl=True,
+          tlsCAFile="C:<path to your certifi>\\certifi\\cacert.pem"
+      )
+
+# Flask Server IP
+http://52.91.85.117:5000
+
