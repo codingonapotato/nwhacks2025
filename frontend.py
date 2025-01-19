@@ -1,20 +1,27 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout, QHBoxLayout
-from PyQt5.QtGui import QPixmap, QTransform
-import sys
-# import slapper #TODO: update name 
+import base64
 import os
+import re
+from PyQt5.QtWidgets import QApplication, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QStackedWidget, QMessageBox, QComboBox, QFormLayout
+import sys
+import backend.slapper as slapper #TODO: update name 
 import json
+import helper.requestSender as requestSender
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("<INSERT NAME HERE>") # TODO: COME UP WITH A CREATIVE NAME 
+        # self.request_sender = requestSender.RequestSender("http://127.0.0.1:5000")
+        self.request_sender = requestSender.RequestSender("http://52.91.85.117:5000")    # connect to EC2 instance 
+
+        self.setWindowTitle("Hand Gesture Login") # TODO: COME UP WITH A CREATIVE NAME 
         
         self.resize(1000,600)
         
         # init stacked widget
-        self.stackedWidget = QStackedWidget()
-        
+        self.stackedWidget = QStackedWidget()     
         self.setMainMenu()
         
         # Set up the stacked widget as the first one 
@@ -78,16 +85,41 @@ class MainWindow(QWidget):
         self.stackedWidget.setCurrentIndex(0)
     
         
-        
-    
-    
     # TODO: Add implementation so that it checks that the username exists    
     def checkUserExists(self):
-        self.setPassword1()
-        # try: 
-        #     slapper.main()
-        # except Exception as e: 
-        #     print(e)
+        # self.setPassword1()
+        email = self.usernameField.text().strip()
+        try: 
+            password = slapper.main()
+            # password = "1230"
+            with open('public_key.pem', "rb") as f:    # read in binary 
+                public_key = f.read()
+                public_key = serialization.load_pem_public_key(public_key)
+            encrypted_password = public_key.encrypt(
+                password.encode(),  # Convert password to bytes
+                padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+                )
+    )
+            encrypted_password_base64 = base64.b64encode(encrypted_password).decode('utf-8')
+            login_response = self.request_sender.login(email, encrypted_password_base64)
+            if login_response['status'] == 200:
+                login_success_Notif = QMessageBox()
+                login_success_Notif.setText("Login successful, congrads!!")
+                login_success_Notif.setIcon(QMessageBox.Information)
+                login_success_Notif.exec_()
+                self.goBackToMainMenu()
+            else:
+                login_fail_Notif = QMessageBox()
+                login_fail_Notif.setText("Login failed, try again!")
+                login_fail_Notif.setIcon(QMessageBox.Critical)
+                login_fail_Notif.exec_()
+                self.goBackToMainMenu()
+            print(login_response)
+        except Exception as e: 
+            print(e)
         
         # TODO: make it call the next screen
         
@@ -105,10 +137,21 @@ class MainWindow(QWidget):
         registerPage.addWidget(userLabel_2)
         self.user_email_confirmation = QLineEdit()
         registerPage.addWidget(self.user_email_confirmation)
+
+        userLabel_3 = QLabel("Enter your password:")
+        registerPage.addWidget(userLabel_3)
+        self.user_password_registration = QLineEdit()
+        registerPage.addWidget(self.user_password_registration)
+
+        userLabel_4 = QLabel("Confirm your password:")
+        registerPage.addWidget(userLabel_4)
+        self.user_password_confirmation = QLineEdit()
+        registerPage.addWidget(self.user_password_confirmation)
+        
         
         nextButton = QPushButton("Next")
         registerPage.addWidget(nextButton)
-        nextButton.clicked.connect(self.checkValidEmail)
+        nextButton.clicked.connect(self.checkValidRegistration)
         
         goBackButton = QPushButton("Cancel")
         registerPage.addWidget(goBackButton)
@@ -125,7 +168,57 @@ class MainWindow(QWidget):
         self.stackedWidget.addWidget(registerWidget)
         
         self.stackedWidget.setCurrentWidget(registerWidget)
+    
+    def checkValidRegistration(self):
+        valid_email = self.checkValidEmail()
+        valid_password = self.checkValidPassword()
+        if (valid_email and valid_password):
+            try: 
+                register_response = self.request_sender.registration(self.user_email_field.text(), self.user_password_registration.text())
+                public_key = register_response['message']['public_key']
+                print(public_key)
+                with open("public_key.pem", "w") as f:
+                    f.write(public_key)
+                print("Public key saved locally")
+                register_success_Notif = QMessageBox()
+                register_success_Notif.setText("Registration successful, redirecting back to home page.")
+                register_success_Notif.setIcon(QMessageBox.Information)
+                register_success_Notif.exec_()
+                self.goBackToMainMenu()
+            except Exception as e: 
+                register_fail_Notif = QMessageBox()
+                register_fail_Notif.setText("Registration failed, redirecting back to home page.")
+                register_fail_Notif.setIcon(QMessageBox.Critical)
+                register_fail_Notif.exec_()
+                self.goBackToMainMenu()
+                print(e)
+        # TODO redirect to main page after successful registraton
         
+
+
+    def checkValidPassword(self):
+        pattern = r'[4-9]'
+        first_user_password = self.user_password_registration.text()
+        second_user_password = self.user_password_confirmation.text()
+        if re.search(pattern, first_user_password):
+            invalid_Notif = QMessageBox()
+            invalid_Notif.setText("Invalid password detected. Can only set from digits 0 to 3")
+            invalid_Notif.setIcon(QMessageBox.Critical)
+            invalid_Notif.exec_()
+            return False
+        if first_user_password == "" or second_user_password == "":
+            invalid_Notif = QMessageBox()
+            invalid_Notif.setText("Invalid password detected. Please try again")
+            invalid_Notif.setIcon(QMessageBox.Critical)
+            invalid_Notif.exec_()
+            return False
+        elif first_user_password != second_user_password:
+            mismatch_Notif = QMessageBox()
+            mismatch_Notif.setText("Password do not match! Please try again")
+            mismatch_Notif.setIcon(QMessageBox.Critical)
+            mismatch_Notif.exec_()
+            return False
+        return True
         
     def checkValidEmail(self):
         first_user_email = self.user_email_field.text()
@@ -135,19 +228,35 @@ class MainWindow(QWidget):
             invalid_Notif.setText("Invalid email detected. Please try again")
             invalid_Notif.setIcon(QMessageBox.Critical)
             invalid_Notif.exec_()
+            return False
         elif first_user_email != second_user_email:
             mismatch_Notif = QMessageBox()
             mismatch_Notif.setText("Emails do not match! Please try again")
             mismatch_Notif.setIcon(QMessageBox.Critical)
             mismatch_Notif.exec_()
+            return False
         else:
              ## TODO: add case to check if email exists 
-            email = {
-                "email": first_user_email
-            }
-            valToSend = json.dumps(email)
+            # email = {
+            #     "email": first_user_email
+            # }
+            # valToSend = json.dumps(email)
+
+            try: 
+                login_response = self.request_sender.check_user(first_user_email)
+                # print(login_response)
+                if login_response['status'] == 200:
+                    invalid_Notif = QMessageBox()
+                    invalid_Notif.setText("Email already in use. Please try another one")
+                    invalid_Notif.setIcon(QMessageBox.Critical)
+                    invalid_Notif.exec_()
+                    return False
+            except Exception as e: 
+                print(e)
+                return False
             # TODO: call function to check if emai exists 
             # print("Match!")
+        return True
             
 # {
 # email : "bob@netgear.com",

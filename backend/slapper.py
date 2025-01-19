@@ -1,9 +1,11 @@
+import os
 import cv2
 import time
-from detector import detector
+from backend.detector import detector
 import json
 
-file_name = "gesture.txt"
+
+file_name = os.path.join(os.path.dirname(__file__), "gesture.txt")
 
 # Read JSON from file
 with open(file_name, "r") as file:
@@ -60,8 +62,8 @@ def main():
             elapsed_time = time.time() - wrist_start_time
             wrist_current_x = wrist * img_width
 
-            # Check if the hand moved across 40% of the camera width within 2 seconds
-            if elapsed_time <= 3 and wrist_current_x - wrist_start_x >= 0.4 * img_width:
+            # Check if the hand moved across 30% of the camera width within 2 seconds
+            if elapsed_time <= 3 and wrist_current_x - wrist_start_x >= 0.3 * img_width:
                 swipe_detected = True
                 print("Swipe detected!")
 
@@ -113,8 +115,14 @@ def main():
         cv2.imshow("Image", img)
         cv2.waitKey(1)
 
-
+    password = convert(result)
     print(convert(result))
+    cap.release()
+    cv2.destroyAllWindows()
+    
+    return password
+    # login_response = request_sender.login("tt@example.com", password)
+
 
 if __name__ == "__main__":
     main()
